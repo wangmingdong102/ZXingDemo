@@ -114,6 +114,12 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   private InactivityTimer inactivityTimer;
   private BeepManager beepManager;
   private AmbientLightManager ambientLightManager;
+  /* Module:ZXing,Task:finder view,Owner:wangmingdong,Date:2019.0325 */
+  private boolean mFinderViewResultShow = true;
+  private boolean mUseFullScreenImage = false;
+  private int mOrientation = Configuration.ORIENTATION_PORTRAIT;
+  private int mRotatingInTheDirection = 0;
+  /* Module:ZXing,Task:finder view,Owner:wangmingdong,Date:2019.0325 */
 
   ViewfinderView getViewfinderView() {
     return viewfinderView;
@@ -130,6 +136,12 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
+
+    /* Module:ZXing,Task:finder view,Owner:wangmingdong,Date:2019.0325 */
+    mFinderViewResultShow = getResources().getBoolean(R.bool.config_finder_view_result_show);
+    mUseFullScreenImage = getResources().getBoolean(R.bool.config_use_fullscreen_image);
+    mOrientation = getResources().getConfiguration().orientation;
+    /* Module:ZXing,Task:finder view,Owner:wangmingdong,Date:2019.0325 */
 
     Window window = getWindow();
     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -615,9 +627,13 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   // Briefly show the contents of the barcode, then handle the result outside Barcode Scanner.
   private void handleDecodeExternally(Result rawResult, ResultHandler resultHandler, Bitmap barcode) {
 
-    if (barcode != null) {
-      viewfinderView.drawResultBitmap(barcode);
+    /* Module:ZXing,Task:don't show finder view,Owner:wangmingdong,Date:2019.0325 */
+    if(mFinderViewResultShow) {
+      if (barcode != null) {
+        viewfinderView.drawResultBitmap(barcode);
+      }
     }
+    /* Module:ZXing,Task:don't show finder view,Owner:wangmingdong,Date:2019.0325 */
 
     long resultDurationMS;
     if (getIntent() == null) {
@@ -765,4 +781,20 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   public void drawViewfinder() {
     viewfinderView.drawViewfinder();
   }
+
+  /* Module:ZXing,Task:finder view,Owner:wangmingdong,Date:2019.0325 */
+  public int getOrientation(){
+    return mOrientation;
+  }
+
+  public int getRotatingInTheDirection(){
+    int rotatingInTheDirection = mRotatingInTheDirection;
+    mRotatingInTheDirection = (mRotatingInTheDirection == 0)  ? 1 : 0;
+    return rotatingInTheDirection;
+  }
+
+  public boolean useFullScreenImage(){
+    return mUseFullScreenImage;
+  }
+  /* Module:ZXing,Task:finder view,Owner:wangmingdong,Date:2019.0325 */
 }

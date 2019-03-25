@@ -16,7 +16,10 @@
 
 package com.google.zxing.client.android;
 
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+
+import com.doom.util.LogUtil;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
@@ -76,7 +79,41 @@ final class DecodeHandler extends Handler {
   private void decode(byte[] data, int width, int height) {
     long start = System.nanoTime();
     Result rawResult = null;
-    PlanarYUVLuminanceSource source = activity.getCameraManager().buildLuminanceSource(data, width, height);
+
+    /* Module:ZXing,Task:xxx,Owner:wangmingdong,Date:2019.0325 */
+    int orientation = activity.getOrientation();
+    int rotatingInTheDirection = activity.getRotatingInTheDirection();
+    LogUtil.d(TAG, "decode orientation:"+orientation+" rotatingInTheDirection:"+rotatingInTheDirection);
+    boolean needRotation = false;
+    if((orientation == Configuration.ORIENTATION_PORTRAIT && rotatingInTheDirection == 0)||
+            (orientation == Configuration.ORIENTATION_LANDSCAPE && rotatingInTheDirection == 1)) {
+      needRotation = true;
+    }
+    LogUtil.d(TAG, "decode needRotation:"+needRotation);
+    if(needRotation) {
+      LogUtil.d(TAG, "decode rotatedData start");
+      byte[] rotatedData = new byte[data.length];
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++)
+          rotatedData[x * height + height - y - 1] = data[x + y * width];
+      }
+      LogUtil.d(TAG, "decode rotatedData end");
+      int tmp = width; // Here we are swapping, that's the difference to #11
+      width = height;
+      height = tmp;
+      data = rotatedData;
+    }
+    /* Module:ZXing,Task:xxx,Owner:wangmingdong,Date:2019.0325 */
+
+    /* Module:ZXing,Task:xxx,Owner:wangmingdong,Date:2019.0325 */
+	PlanarYUVLuminanceSource source = null;    
+    boolean useFullScreenImage = activity.useFullScreenImage();
+    if(useFullScreenImage){
+      source = activity.getCameraManager().buildLuminanceSourceFullScreen(data, width, height);
+    }else {
+      source = activity.getCameraManager().buildLuminanceSource(data, width, height);
+    }
+    /* Module:ZXing,Task:xxx,Owner:wangmingdong,Date:2019.0325 */
     if (source != null) {
       BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
       try {

@@ -34,7 +34,8 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
 
   private static final String TAG = AutoFocusManager.class.getSimpleName();
 
-  private static final long AUTO_FOCUS_INTERVAL_MS = 2000L;
+  /* Module:ZXing,Task:2000L -> 1000L,Owner:wangmingdong,Date:2019.0325 */
+  private static final long AUTO_FOCUS_INTERVAL_MS = 1000L;
   private static final Collection<String> FOCUS_MODES_CALLING_AF;
   static {
     FOCUS_MODES_CALLING_AF = new ArrayList<>(2);

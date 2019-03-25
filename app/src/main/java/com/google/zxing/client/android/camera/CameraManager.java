@@ -325,7 +325,13 @@ public final class CameraManager {
     }
     // Go ahead and assume it's YUV rather than die.
     return new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
-                                        rect.width(), rect.height(), false);
+            rect.width(), rect.height(), false);
   }
 
+  /* Module:ZXing,Task:Set to No area restriction,Owner:wangmingdong,Date:2019.0325 */
+  public PlanarYUVLuminanceSource buildLuminanceSourceFullScreen(byte[] data, int width, int height) {
+    return new PlanarYUVLuminanceSource(data, width, height, 0, 0,
+            width, height, false);
+  }
+  /* Module:ZXing,Task:Set to No area restriction,Owner:wangmingdong,Date:2019.0325 */
 }
